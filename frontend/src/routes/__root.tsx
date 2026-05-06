@@ -1,6 +1,6 @@
-import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
-
-import appCss from "../styles.css?url";
+import { Outlet, Link, createRootRoute, HeadContent, Scripts, useNavigate } from "@tanstack/react-router";
+import { AuthProvider, useAuth } from "@/hooks/use-auth";
+import { useEffect } from "react";
 
 function NotFoundComponent() {
   return (
@@ -44,7 +44,6 @@ export const Route = createRootRoute({
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
-      { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -54,24 +53,45 @@ export const Route = createRootRoute({
     ],
   }),
   shellComponent: RootShell,
-  component: RootComponent,
+  component: RootProviders,
   notFoundComponent: NotFoundComponent,
 });
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        {children}
-        <Scripts />
-      </body>
-    </html>
+    <>
+      <HeadContent />
+      {children}
+      <Scripts />
+    </>
   );
 }
 
 function RootComponent() {
-  return <Outlet />;
+  const { token } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // If the user is not authenticated, redirect to the login page.
+    // Add exceptions for public routes like /login and /signup.
+    const publicRoutes = ["/login", "/signup"];
+    if (!token && !publicRoutes.includes(window.location.pathname)) {
+      navigate({ to: "/login" });
+    }
+  }, [token, navigate]);
+
+  return (
+    <>
+      <Outlet />
+    </>
+  );
 }
+
+function RootProviders() {
+  return (
+    <AuthProvider>
+      <RootComponent />
+    </AuthProvider>
+  );
+}
+

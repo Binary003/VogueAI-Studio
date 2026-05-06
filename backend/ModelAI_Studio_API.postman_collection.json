@@ -1,215 +1,256 @@
 {
-  "info": {
-    "_postman_id": "modelai-backend-collection",
-    "name": "ModelAI Studio Backend API",
-    "description": "Complete API collection for ModelAI Studio backend",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "item": [
-    {
-      "name": "Authentication",
-      "item": [
-        {
-          "name": "Signup",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"securePassword123\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/auth/signup",
-              "host": ["{{baseUrl}}"],
-              "path": ["auth", "signup"]
-            }
-          }
-        },
-        {
-          "name": "Login",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"securePassword123\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/auth/login",
-              "host": ["{{baseUrl}}"],
-              "path": ["auth", "login"]
-            }
-          }
-        },
-        {
-          "name": "Get Profile",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/auth/profile",
-              "host": ["{{baseUrl}}"],
-              "path": ["auth", "profile"]
-            }
-          }
-        }
-      ]
+    "info": {
+        "_postman_id": "modelai-backend-collection",
+        "name": "ModelAI Studio Backend API",
+        "description": "Complete API collection for ModelAI Studio backend",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
     },
-    {
-      "name": "Upload",
-      "item": [
+    "item": [
         {
-          "name": "Upload Image",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
-              }
-            ],
-            "body": {
-              "mode": "formdata",
-              "formdata": [
+            "name": "Authentication",
+            "item": [
                 {
-                  "key": "image",
-                  "type": "file",
-                  "src": ""
+                    "name": "Signup",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"securePassword123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/auth/signup",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "signup"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Login",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"securePassword123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/auth/login",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "login"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Profile",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/auth/profile",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "profile"
+                            ]
+                        }
+                    }
                 }
-              ]
-            },
-            "url": {
-              "raw": "{{baseUrl}}/upload",
-              "host": ["{{baseUrl}}"],
-              "path": ["upload"]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "Generate",
-      "item": [
-        {
-          "name": "Generate Images",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"imageUrl\": \"https://res.cloudinary.com/your-cloud/image/upload/v123/modelai_uploads/abc.jpg\",\n  \"publicId\": \"modelai_uploads/abc\",\n  \"gender\": \"female\",\n  \"bodyType\": \"athletic\",\n  \"skinTone\": \"medium\",\n  \"pose\": \"standing\",\n  \"background\": \"studio\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/generate",
-              "host": ["{{baseUrl}}"],
-              "path": ["generate"]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "Projects",
-      "item": [
-        {
-          "name": "Get All Projects",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/projects",
-              "host": ["{{baseUrl}}"],
-              "path": ["projects"]
-            }
-          }
+            ]
         },
         {
-          "name": "Get Project by ID",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/projects/:id",
-              "host": ["{{baseUrl}}"],
-              "path": ["projects", ":id"]
-            }
-          }
+            "name": "Upload",
+            "item": [
+                {
+                    "name": "Upload Image",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "image",
+                                    "type": "file",
+                                    "src": ""
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/upload",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "upload"
+                            ]
+                        }
+                    }
+                }
+            ]
         },
         {
-          "name": "Delete Project",
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/projects/:id",
-              "host": ["{{baseUrl}}"],
-              "path": ["projects", ":id"]
+            "name": "Generate",
+            "item": [
+                {
+                    "name": "Generate Images",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"imageUrl\": \"https://res.cloudinary.com/your-cloud/image/upload/v123/modelai_uploads/abc.jpg\",\n  \"publicId\": \"modelai_uploads/abc\",\n  \"gender\": \"female\",\n  \"bodyType\": \"athletic\",\n  \"skinTone\": \"medium\",\n  \"pose\": \"standing\",\n  \"background\": \"studio\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/generate",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "generate"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Projects",
+            "item": [
+                {
+                    "name": "Get All Projects",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/projects",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "projects"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Project by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/projects/:id",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "projects",
+                                ":id"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Project",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/projects/:id",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "projects",
+                                ":id"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Health Check",
+            "request": {
+                "method": "GET",
+                "url": {
+                    "raw": "{{baseUrl}}/health",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "health"
+                    ]
+                }
             }
-          }
         }
-      ]
-    },
-    {
-      "name": "Health Check",
-      "request": {
-        "method": "GET",
-        "url": {
-          "raw": "{{baseUrl}}/health",
-          "host": ["{{baseUrl}}"],
-          "path": ["health"]
+    ],
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:5000/api",
+            "type": "string"
+        },
+        {
+            "key": "token",
+            "value": "",
+            "type": "string"
         }
-      }
-    }
-  ],
-  "variable": [
-    {
-      "key": "baseUrl",
-      "value": "http://localhost:5000/api",
-      "type": "string"
-    },
-    {
-      "key": "token",
-      "value": "",
-      "type": "string"
-    }
-  ]
+    ]
 }

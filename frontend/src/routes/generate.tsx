@@ -3,7 +3,7 @@ import { AppShell } from "@/layouts/AppShell";
 import { UploadBox } from "@/components/UploadBox";
 import { ImageGrid } from "@/components/ImageGrid";
 import { useState } from "react";
-import { generateModels, type GeneratedImage } from "@/services/api";
+import { generateModels, type GeneratedImage, uploadImage } from "@/services/api";
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -19,6 +19,47 @@ const SKIN = ["#f5d8c0", "#e6b89c", "#c98e6b", "#8d5524", "#5a3a22"];
 const POSE = ["Standing", "Walking", "Side", "Sitting", "Dynamic"];
 const BG = ["Studio White", "Outdoor", "Urban", "Minimal Beige", "Editorial"];
 
+const mapGender = (value: string) => {
+  if (value === "Male") return "male";
+  if (value === "Female") return "female";
+  return "neutral";
+};
+
+const mapBodyType = (value: string) => {
+  if (value === "Athletic") return "athletic";
+  if (value === "Curvy") return "curvy";
+  if (value === "Plus") return "plus-size";
+  if (value === "Petite") return "slim";
+  return "average";
+};
+
+const mapSkinTone = (value: string) => {
+  const map: Record<string, string> = {
+    "#f5d8c0": "fair",
+    "#e6b89c": "medium",
+    "#c98e6b": "olive",
+    "#8d5524": "dark",
+    "#5a3a22": "dark",
+  };
+  return map[value] || "medium";
+};
+
+const mapPose = (value: string) => {
+  if (value === "Walking") return "walking";
+  if (value === "Sitting") return "sitting";
+  if (value === "Dynamic") return "pose2";
+  if (value === "Side") return "pose1";
+  return "standing";
+};
+
+const mapBackground = (value: string) => {
+  if (value === "Outdoor") return "outdoor";
+  if (value === "Urban") return "custom";
+  if (value === "Minimal Beige") return "indoor";
+  if (value === "Editorial") return "custom";
+  return "studio";
+};
+
 function Generate() {
   const [gender, setGender] = useState(GENDER[0]);
   const [body, setBody] = useState(BODY[1]);
@@ -27,18 +68,43 @@ function Generate() {
   const [bg, setBg] = useState(BG[0]);
   const [images, setImages] = useState<GeneratedImage[]>([]);
   const [loading, setLoading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploadedImage, setUploadedImage] = useState<{ imageUrl: string; publicId: string } | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   async function handleGenerate() {
+    setError(null);
     setLoading(true);
     try {
+      if (!selectedFile && !uploadedImage) {
+        setError("Please upload a clothing image first.");
+        return;
+      }
+
+      let uploaded = uploadedImage;
+      if (!uploaded && selectedFile) {
+        uploaded = await uploadImage(selectedFile);
+        setUploadedImage(uploaded);
+      }
+
+      if (!uploaded) {
+        setError("Unable to upload the clothing image.");
+        return;
+      }
+
       const res = await generateModels({
-        gender,
-        bodyType: body,
-        skinTone: skin,
-        pose,
-        background: bg,
+        imageUrl: uploaded.imageUrl,
+        publicId: uploaded.publicId,
+        gender: mapGender(gender),
+        bodyType: mapBodyType(body),
+        skinTone: mapSkinTone(skin),
+        pose: mapPose(pose),
+        background: mapBackground(bg),
       });
       setImages(res);
+    } catch (err: any) {
+      const message = err?.response?.data?.message || err?.message || "Generation failed.";
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -49,7 +115,16 @@ function Generate() {
       <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
         {/* Left: upload + controls */}
         <div className="space-y-6">
-          <UploadBox />
+          <UploadBox
+            onFile={(file) => {
+              setSelectedFile(file);
+              setUploadedImage(null);
+            }}
+            onClear={() => {
+              setSelectedFile(null);
+              setUploadedImage(null);
+            }}
+          />
           <div className="glass rounded-2xl p-5 space-y-5">
             <Group label="Gender">
               <Dropdown options={GENDER} value={gender} onChange={setGender} />
@@ -78,6 +153,8 @@ function Generate() {
             <Group label="Background">
               <Dropdown options={BG} value={bg} onChange={setBg} />
             </Group>
+
+            {error && <div className="text-xs text-destructive">{error}</div>}
 
             <motion.button
               whileTap={{ scale: 0.97 }}

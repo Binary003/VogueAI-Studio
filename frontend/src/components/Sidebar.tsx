@@ -7,8 +7,10 @@ import {
   CreditCard,
   Settings,
   Wand2,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/use-auth";
 
 const items = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -20,6 +22,8 @@ const items = [
 
 export function Sidebar() {
   const location = useLocation();
+  const { logout } = useAuth();
+
   return (
     <>
       {/* Desktop */}
@@ -74,6 +78,15 @@ export function Sidebar() {
           >
             Upgrade
           </Link>
+        </div>
+        <div className="mt-auto">
+          <button
+            onClick={logout}
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary"
+          >
+            <LogOut className="h-4 w-4" />
+            Sign out
+          </button>
         </div>
       </aside>
 

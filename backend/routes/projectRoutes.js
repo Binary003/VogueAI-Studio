@@ -1,8 +1,8 @@
 import express from 'express';
 import {
-  getAllProjects,
-  getProjectById,
-  deleteProject,
+    getAllProjects,
+    getProjectById,
+    deleteProject,
 } from '../controllers/projectsController.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 

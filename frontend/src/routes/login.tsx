@@ -1,7 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { Wand2 } from "lucide-react";
 import { useState } from "react";
+import { login, signup } from "@/services/api";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Sign in — ModelAI Studio" }] }),
@@ -14,13 +16,19 @@ function LoginPage() {
 
 export function AuthLayout({ mode }: { mode: "login" | "signup" }) {
   const isSignup = mode === "signup";
+  const navigate = useNavigate();
+  const { setToken, setUser } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [touched, setTouched] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
+  const nameError = isSignup && touched && !name.trim() ? "Name is required" : "";
   const emailError = touched && !/^\S+@\S+\.\S+$/.test(email) ? "Enter a valid email" : "";
   const passError = touched && password.length < 6 ? "Min 6 characters" : "";
+  const hasError = Boolean(nameError || emailError || passError);
 
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
@@ -47,13 +55,36 @@ export function AuthLayout({ mode }: { mode: "login" | "signup" }) {
 
           <form
             className="mt-8 space-y-4"
-            onSubmit={(e) => {
+            onSubmit={async (e) => {
               e.preventDefault();
               setTouched(true);
+              setError(null);
+
+              if (hasError) {
+                return;
+              }
+
+              try {
+                setLoading(true);
+                if (isSignup) {
+                  const res = await signup({ name: name.trim(), email, password });
+                  setToken(res.token);
+                  setUser(res.user);
+                } else {
+                  const res = await login({ email, password });
+                  setToken(res.token);
+                  setUser(res.user);
+                }
+                navigate({ to: "/generate" });
+              } catch (_err) {
+                setError(isSignup ? "Could not create account. Try a different email." : "Invalid email or password.");
+              } finally {
+                setLoading(false);
+              }
             }}
           >
             {isSignup && (
-              <Field label="Full name">
+              <Field label="Full name" error={nameError}>
                 <input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -81,11 +112,14 @@ export function AuthLayout({ mode }: { mode: "login" | "signup" }) {
               />
             </Field>
 
+            {error && <div className="text-xs text-destructive">{error}</div>}
+
             <button
               type="submit"
-              className="mt-2 w-full rounded-xl gradient-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-glow hover:opacity-95"
+              disabled={loading}
+              className="mt-2 w-full rounded-xl gradient-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-glow hover:opacity-95 disabled:opacity-70"
             >
-              {isSignup ? "Create account" : "Sign in"}
+              {loading ? (isSignup ? "Creating..." : "Signing in...") : isSignup ? "Create account" : "Sign in"}
             </button>
 
             <button

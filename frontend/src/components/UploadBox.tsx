@@ -6,9 +6,11 @@ import { cn } from "@/lib/utils";
 
 export function UploadBox({
   onFile,
+  onClear,
   className,
 }: {
   onFile?: (file: File, previewUrl: string) => void;
+  onClear?: () => void;
   className?: string;
 }) {
   const [preview, setPreview] = useState<string | null>(null);
@@ -35,7 +37,10 @@ export function UploadBox({
         >
           <img src={preview} alt="upload preview" className="h-full w-full object-cover" />
           <button
-            onClick={() => setPreview(null)}
+            onClick={() => {
+              setPreview(null);
+              onClear?.();
+            }}
             className="absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-background/80 backdrop-blur border border-border hover:bg-background"
           >
             <X className="h-4 w-4" />
